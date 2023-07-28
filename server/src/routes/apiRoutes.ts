@@ -3,14 +3,14 @@ import path from 'path'
 import {
   fillTemplateDetails,
   readDir,
-  writeHtmlFile,
-  readTemplate,
+  writeToFile,
+  readFromFile,
   generatePdf,
 } from '../utils'
 import bodyParser from 'body-parser'
 import { APIs } from './routes'
 import { TemplatesPath, PreviewFilesPath, OutputFilesPath } from '../common'
-import {} from '../utils'
+import { parseTemplate } from '../utils/templateParser'
 
 const router = express.Router()
 const jsonParser = bodyParser.json({ type: 'application/json' })
@@ -26,16 +26,12 @@ router.get(APIs.Templates, async (req, res) => {
     return
   }
 
-  if (!files.length) {
-    res.send([])
-    return
-  }
-
   const templateData = []
 
   for (const file of files) {
     const filePath = `${TemplatesPath}/${file.name}`
-    const template = await readTemplate(filePath)
+    // TODO: refactor this to use promisesArr
+    const template = await readFromFile(filePath)
 
     const data = {
       id: file.name,
@@ -59,13 +55,13 @@ router.post(APIs.TemplateDetails, jsonParser, async (req, res) => {
 
   const templatePath = `${TemplatesPath}/${templateId}`
 
-  const contents = (await readTemplate(templatePath)) as string
+  const contents = (await readFromFile(templatePath)) as string
 
   const modifiedContents = fillTemplateDetails(contents, templateDetails)
 
   const filePath = `${PreviewFilesPath}/${templateId}`
 
-  await writeHtmlFile(filePath, modifiedContents)
+  await writeToFile(filePath, modifiedContents)
 
   res.send({ success: true })
 })
@@ -82,7 +78,7 @@ router.get(APIs.TemplateReview, async (req, res) => {
   }
 
   const filepath = `${PreviewFilesPath}/${templateId}`
-  const template = await readTemplate(filepath)
+  const template = await readFromFile(filepath)
 
   const response = {
     template,
@@ -106,6 +102,22 @@ router.get(APIs.GeneratePdf, async (req, res) => {
   const outputPath = `${OutputFilesPath}/${templateId}.pdf`
 
   generatePdf(filepath, outputPath)
+})
+
+// API to parse html template
+router.get(APIs.ParseHtml, async (req, res) => {
+  const params = req.query
+
+  const { templateId } = params
+
+  // TODO: make this more robust
+  if (!templateId) {
+    return
+  }
+
+  await parseTemplate(templateId as string)
+
+  res.send({ success: true })
 })
 
 export default router

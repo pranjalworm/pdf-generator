@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "start": "node dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon dist/server.js\" \"npm run copy-assets\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon --ignore metaData/ dist/server.js\" \"npm run copy-assets\"",
     "build": "rimraf dist && npx tsc",
     "copy-assets": "cp -R ./src/templates/ ./dist/templates"
   },

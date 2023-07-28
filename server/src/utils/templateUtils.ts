@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises'
 import * as pdf from 'html-pdf'
+import { readFromFile } from './fsUtils'
 import { Keys } from '../common'
 
 export function fillTemplateDetails(contents: string, details: any) {
@@ -10,25 +10,11 @@ export function fillTemplateDetails(contents: string, details: any) {
   return modifiedContents
 }
 
-export async function readTemplate(filePath: string) {
-  try {
-    const data = await readFile(filePath, { encoding: 'utf-8' })
-
-    if (!data) {
-      throw Error('Template is empty!')
-    }
-
-    return data
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 export async function generatePdf(
   htmlFilePath: string,
   outputFilePath: string
 ) {
-  const htmlTemplate = await readTemplate(htmlFilePath)
+  const htmlTemplate = await readFromFile(htmlFilePath)
   const options = {
     height: '896px',
     width: '598px',
