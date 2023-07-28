@@ -3,4 +3,5 @@ export const APIs = {
   TemplateDetails: '/template-details',
   TemplateReview: '/template-review',
   GeneratePdf: '/generate-pdf',
+  ParseHtml: '/parse-html',
 }

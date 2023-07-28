@@ -1,5 +1,4 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises'
-import { Keys } from '../common'
 
 export async function readDir(path: string) {
   try {
@@ -9,6 +8,24 @@ export async function readDir(path: string) {
   }
 }
 
-export async function writeHtmlFile(filePath: string, contents: string) {
-  await writeFile(filePath, contents, { encoding: 'utf-8' })
+export async function writeToFile(filePath: string, contents: string) {
+  try {
+    await writeFile(filePath, contents, { encoding: 'utf-8' })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export async function readFromFile(filePath: string) {
+  try {
+    const data = await readFile(filePath, { encoding: 'utf-8' })
+
+    if (!data) {
+      throw Error('Template is empty!')
+    }
+
+    return data
+  } catch (error) {
+    console.error(error)
+  }
 }
