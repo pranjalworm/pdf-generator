@@ -15,11 +15,16 @@
   </head>
   <body>
     <div class="something">
-      This is the company name {{companyName::COMPANY_NAME}}
+      This is the company name {{companyName::COMPANY_NAME::text}}
     </div>
 
     <div class="something">
-      This is the person name {{personName::PERSON_NAME}} {{age::AGE}}
+      This is the person name {{personName::PERSON_NAME::text}}
+      {{age::AGE::number}}
+    </div>
+
+    <div class="something">
+      this is the description {{description::DESCRIPTION::textarea}}
     </div>
   </body>
 </html>

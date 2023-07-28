@@ -2,6 +2,12 @@ import path from 'path'
 import { readDir, readFromFile, writeToFile } from './fsUtils'
 import { TemplatesMetaDataPath, TemplatesPath } from '../common'
 
+interface KeyValuePair {
+  key: string
+  value: string
+  type: string
+}
+
 export async function parseAllTemplates() {
   const templatesPath = path.resolve(TemplatesPath)
 
@@ -47,22 +53,29 @@ export async function parseTemplate(templateId: string) {
 }
 
 function extractKeyValuePairs(contents: string) {
-  const regEx = /{{2}.[a-zA-Z]+::.[_A-Z]+}{2}/gm
+  const regEx = /{{2}.[a-zA-Z]+::.[_A-Z]+::.[a-z]+}{2}/gm
 
   const matches = contents.match(regEx)
 
   if (!matches) {
-    throw Error('No matches found in template!')
+    console.error('No matches found in template!')
+    return
   }
 
-  const keyValuePairs: { [key: string]: string } = {}
+  const keyValuePairs: KeyValuePair[] = []
 
   for (const match of matches) {
     let strippedStr = match.replace('{{', '')
     strippedStr = strippedStr.replace('}}', '')
-    const [key, value] = strippedStr.split('::')
+    const [key, value, type] = strippedStr.split('::')
 
-    keyValuePairs[key] = value
+    const keyValuePair: KeyValuePair = {
+      key,
+      value,
+      type,
+    }
+
+    keyValuePairs.push(keyValuePair)
   }
 
   return keyValuePairs

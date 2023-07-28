@@ -9,7 +9,12 @@ import {
 } from '../utils'
 import bodyParser from 'body-parser'
 import { APIs } from './routes'
-import { TemplatesPath, PreviewFilesPath, OutputFilesPath } from '../common'
+import {
+  TemplatesPath,
+  PreviewFilesPath,
+  OutputFilesPath,
+  TemplatesMetaDataPath,
+} from '../common'
 import { parseTemplate } from '../utils/templateParser'
 
 const router = express.Router()
@@ -43,6 +48,24 @@ router.get(APIs.Templates, async (req, res) => {
   }
 
   res.send(templateData)
+})
+
+router.get(APIs.TemplateDetails, async (req, res) => {
+  const params = req.query
+
+  const { templateId } = params
+
+  if (!templateId) {
+    res.send({ success: false, error: 'Provide templateId' })
+    return
+  }
+
+  const data = (await readFromFile(TemplatesMetaDataPath)) as string
+  const templatesMetaData = JSON.parse(data)
+
+  const templateMetaData = templatesMetaData[templateId as string]
+
+  res.send(templateMetaData)
 })
 
 // API to fill template details

@@ -1,10 +1,1 @@
-{
-  "template1.html": {
-    "companyName": "COMPANY_NAME",
-    "personName": "PERSON_NAME",
-    "age": "AGE"
-  },
-  "template2.html": {
-    "companyName": "COMPANY_NAME"
-  }
-}
+{"template1.html":[{"key":"companyName","value":"COMPANY_NAME","type":"text"},{"key":"personName","value":"PERSON_NAME","type":"text"},{"key":"age","value":"AGE","type":"number"},{"key":"description","value":"DESCRIPTION","type":"textarea"}],"template2.html":[{"key":"companyName","value":"COMPANY_NAME","type":"text"}]}

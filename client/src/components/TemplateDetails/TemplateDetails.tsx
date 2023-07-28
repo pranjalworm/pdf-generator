@@ -1,63 +1,75 @@
 import { useSelector } from "react-redux"
 import { templateSelector } from "../../store/store"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ApiService from "../../services/ApiService"
 import { useNavigate } from "react-router-dom"
 import Paths from "../../common/paths"
+import TextInput from "../TextInput"
+import TextAreaInput from "../TextAreaInput"
+import NumberInput from "../NumberInput"
+import ImageInput from "../ImageInput"
 
 const TemplateDetails = () => {
 
   const navigate = useNavigate()
-
   const templateId = useSelector(templateSelector)
 
   const [processing, setProcessing] = useState(false)
+  const [templateDetails, setTemplateDetails] = useState<any[]>([])
 
-  const [companyName, setCompanyName] = useState('')
+  useEffect(() => {
+    const getTemplateDetails = async () => {
+      const templateDetails = await ApiService.getTemplateDetails(templateId)
+      setTemplateDetails(templateDetails)
+      console.log(templateDetails)
+    }
 
-  const generatePdfClickHandler = async () => {
+    getTemplateDetails()
+  }, [])
+
+  const previewPdfHandler = async () => {
 
     const details = {
-      companyName,
       templateId
     }
 
     setProcessing(true)
 
-    await ApiService.sendInputDetails(details)
+    await ApiService.sendTemplateDetails(details)
 
     setProcessing(false)
 
     navigate(Paths.TemplateReview)
   }
 
-  const getGenerateButton = () => {
+  const getInputField = (entry: {[key: string]: string}, i: number) => {
 
-    const buttonText = processing ? 'Generating...' : 'Generate PDF'
+    switch(entry.type) {
+      case 'text':
+        return <TextInput key={i} defaultValue=""/>
 
-    return (
-      <button className="border rounded px-4 py-2 bg-blue-900 text-white w-36"
-        onClick={generatePdfClickHandler}>
-          {buttonText}
-      </button>
-    )
+      case 'textarea':
+        return <TextAreaInput key={i} defaultValue=""/>
+
+      case 'number':
+        return <NumberInput key={i} defaultValue="" />
+
+      case 'image':
+        return <ImageInput key={i} defaultValue=""/>
+    }
   }
 
   return (
     <div className="flex flex-col bg-slate-50 h-screen w-1/2 items-start p-8 m-8">
-      <input className="border rounded p-2 my-4 w-2/3"
-        name="company-name"
-        defaultValue={companyName}
-        placeholder="Company Name"
-        onChange={e => setCompanyName(e.target.value)} />
 
-      {/* <input className="border rounded p-2 my-4 w-2/3"
-        name="company-name"
-        defaultValue={companyName}
-        placeholder="Company Name"
-        onChange={e => setCompanyName(e.target.value)} /> */}
+      {
+        templateDetails.length && templateDetails.map((entry, i) => getInputField(entry, i))
+      }
 
-        {getGenerateButton()}
+      <button className="border rounded px-4 py-2 bg-blue-900 text-white w-36"
+        onClick={previewPdfHandler}>
+        Preview PDF
+      </button>
     </div>
   )
 }
