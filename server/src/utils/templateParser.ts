@@ -1,5 +1,29 @@
-import { readFromFile, writeToFile } from './fsUtils'
+import path from 'path'
+import { readDir, readFromFile, writeToFile } from './fsUtils'
 import { TemplatesMetaDataPath, TemplatesPath } from '../common'
+
+export async function parseAllTemplates() {
+  const templatesPath = path.resolve(TemplatesPath)
+
+  const files = await readDir(templatesPath)
+
+  if (!files || !files.length) {
+    console.info('No templates present')
+    return
+  }
+
+  const promisesArr = []
+
+  for (const file of files) {
+    const templateId = file.name
+    console.info('Parsing template', templateId)
+    promisesArr.push(parseTemplate(templateId))
+  }
+
+  await promisesArr
+
+  console.info('Successfully parsed all templates')
+}
 
 export async function parseTemplate(templateId: string) {
   const templatePath = `${TemplatesPath}/${templateId}`

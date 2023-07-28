@@ -26,15 +26,11 @@ router.get(APIs.Templates, async (req, res) => {
     return
   }
 
-  if (!files.length) {
-    res.send([])
-    return
-  }
-
   const templateData = []
 
   for (const file of files) {
     const filePath = `${TemplatesPath}/${file.name}`
+    // TODO: refactor this to use promisesArr
     const template = await readFromFile(filePath)
 
     const data = {
