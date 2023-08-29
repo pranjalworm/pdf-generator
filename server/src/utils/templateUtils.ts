@@ -1,11 +1,15 @@
 import * as pdf from 'html-pdf'
 import { readFromFile } from './fsUtils'
-import { Keys } from '../common'
+import { getKeyRegex } from './templateParser'
 
 export function fillTemplateDetails(contents: string, details: any) {
-  const { companyName } = details
+  let modifiedContents = contents
 
-  const modifiedContents = contents.replace(Keys.CompanyName, companyName)
+  for (const key of Object.keys(details)) {
+    const keyRegex = getKeyRegex(key)
+
+    modifiedContents = modifiedContents.replace(keyRegex, details[key])
+  }
 
   return modifiedContents
 }

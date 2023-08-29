@@ -1,18 +1,15 @@
-export interface TextInputProps {
-  defaultValue: string
-  changeCallback: (text: string) => void
-}
+import { InputProps } from "../../common"
 
-const TextInput = (props: TextInputProps) => {
+const TextInput = (props: InputProps) => {
 
-  const {defaultValue, changeCallback} = props
+  const {defaultValue, changeCallback, fieldKey: key} = props
 
   return (
     <input className="border rounded p-2 my-4 w-2/3"
       type="text"
       name="company-name"
       defaultValue={defaultValue}
-      onChange={e => changeCallback(e.target.value)} />
+      onChange={e => changeCallback(key, e.target.value)} />
   )
 }
 

@@ -15,7 +15,6 @@ const TemplateReview = () => {
 
     const fetchTemplate = async () => {
       const templateHtml = await ApiService.getTemplatePreview(template)
-      console.log('template', templateHtml)
       setTemplateHtml(templateHtml)
     }
 
@@ -31,13 +30,13 @@ const TemplateReview = () => {
   }
  
   return (
-    <div>
-      <div className="">
+    <div className="flex flex-col">
+      <div className="flex flex-col items-center border rounded p-4 m-4 bg-slate-50">
         {templateHtml ? <TemplatePreview template={templateHtml}/> : 'Loading'}
       </div>
-      <div>
-        <button onClick={goBackHandler}>Back</button>
-        <button onClick={downloadPdfHandler}>Download PDF</button>
+      <div className="flex flex-row justify-evenly mt-8">
+        <button onClick={goBackHandler} className="mx-8 py-2 px-4 text-sky-800 border rounded">Go back</button>
+        <button onClick={downloadPdfHandler} className="py-2 px-4 bg-blue-900 text-white border rounded">Download PDF</button>
       </div>
     </div>
     

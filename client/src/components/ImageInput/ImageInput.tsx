@@ -1,11 +1,8 @@
-export interface ImageInputProps {
-  defaultValue: string
-  changeCallback: (text: string) => void
-}
+import { InputProps } from "../../common"
 
-const ImageInput = (props: ImageInputProps) => {
+const ImageInput = (props: InputProps) => {
 
-  const {defaultValue, changeCallback} = props
+  const {defaultValue, changeCallback, fieldKey: key} = props
 
   return (
     <input className="border rounded p-2 my-4 w-2/3"
@@ -13,7 +10,7 @@ const ImageInput = (props: ImageInputProps) => {
       name="company-name"
       defaultValue={defaultValue}
       placeholder="Company Name"
-      onChange={e => changeCallback(e.target.value)} />
+      onChange={e => changeCallback(key, e.target.value)} />
   )
 }
 

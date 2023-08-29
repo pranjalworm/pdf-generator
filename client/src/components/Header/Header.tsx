@@ -24,7 +24,7 @@ const Header = () => {
   }
 
   return (
-    <header className='flex justify-between items-center text-3xl p-4 bg-blue-800'>
+    <header className='flex justify-between items-center text-3xl p-4 bg-sky-600'>
       <span className='text-xl text-white font-bold'>PDF Generator</span>
       <div className='h-6 w-6 text-white hover:cursor-pointer' onClick={toggleThemeHandler}>{getThemeToggleButton()}</div>
     </header>

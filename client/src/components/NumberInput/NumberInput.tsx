@@ -1,18 +1,15 @@
-export interface NumberInputProps {
-  defaultValue: string
-  changeCallback: (text: string) => void
-}
+import { InputProps } from "../../common"
 
-const NumberInput = (props: NumberInputProps) => {
+const NumberInput = (props: InputProps) => {
 
-  const {defaultValue, changeCallback} = props
+  const {defaultValue, changeCallback, fieldKey: key} = props
 
   return (
     <input className="border rounded p-2 my-4 w-2/3"
       type="number"
       name="company-name"
       defaultValue={defaultValue}
-      onChange={e => changeCallback(e.target.value)} />
+      onChange={e => changeCallback(key, e.target.value)} />
   )
 }
 

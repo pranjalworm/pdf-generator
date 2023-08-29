@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { templateSelector } from "../../store/store"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import ApiService from "../../services/ApiService"
 import { useNavigate } from "react-router-dom"
 import Paths from "../../common/paths"
@@ -14,14 +14,20 @@ const TemplateDetails = () => {
   const navigate = useNavigate()
   const templateId = useSelector(templateSelector)
 
-  const [processing, setProcessing] = useState(false)
+  const inputDetails = useRef<{[key: string]: string | number}>({})
+
   const [templateDetails, setTemplateDetails] = useState<any[]>([])
 
   useEffect(() => {
     const getTemplateDetails = async () => {
       const templateDetails = await ApiService.getTemplateDetails(templateId)
+      console.log('template details', templateDetails)
       setTemplateDetails(templateDetails)
-      console.log(templateDetails)
+
+      for (const entry of templateDetails) {
+        const key = entry.key
+        inputDetails.current[key] = entry.value
+      }
     }
 
     getTemplateDetails()
@@ -29,38 +35,44 @@ const TemplateDetails = () => {
 
   const previewPdfHandler = async () => {
 
-    const details = {
-      templateId
+    const inputValues = inputDetails.current
+
+    const payload = {
+      templateId,
+      details: inputValues
     }
 
-    setProcessing(true)
-
-    await ApiService.sendTemplateDetails(details)
-
-    setProcessing(false)
+    await ApiService.sendTemplateDetails(payload)
 
     navigate(Paths.TemplateReview)
   }
 
+  const onInputChangeHandler = (key: string, value: string | number) => {
+    
+    inputDetails.current[key] = value
+  }
+
   const getInputField = (entry: {[key: string]: string}, i: number) => {
 
-    switch(entry.type) {
+    const {key, type, value} = entry
+
+    switch(type) {
       case 'text':
-        return <TextInput key={i} defaultValue=""/>
+        return <TextInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler}/>
 
       case 'textarea':
-        return <TextAreaInput key={i} defaultValue=""/>
+        return <TextAreaInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler} />
 
       case 'number':
-        return <NumberInput key={i} defaultValue="" />
+        return <NumberInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler} />
 
       case 'image':
-        return <ImageInput key={i} defaultValue=""/>
+        return <ImageInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler}/>
     }
   }
 
   return (
-    <div className="flex flex-col bg-slate-50 h-screen w-1/2 items-start p-8 m-8">
+    <div className="flex flex-col items-center bg-slate-50 h-screen w-1/2 p-8 m-8">
 
       {
         templateDetails.length && templateDetails.map((entry, i) => getInputField(entry, i))

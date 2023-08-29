@@ -4,8 +4,8 @@ import { TemplatesMetaDataPath, TemplatesPath } from '../common'
 
 interface KeyValuePair {
   key: string
-  value: string
   type: string
+  value: string
 }
 
 export async function parseAllTemplates() {
@@ -53,9 +53,9 @@ export async function parseTemplate(templateId: string) {
 }
 
 function extractKeyValuePairs(contents: string) {
-  const regEx = /{{2}.[a-zA-Z]+::.[_A-Z]+::.[a-z]+}{2}/gm
+  const regex = /{{2}.[a-zA-Z]+::.[a-z]+::.+}{2}/gm
 
-  const matches = contents.match(regEx)
+  const matches = contents.match(regex)
 
   if (!matches) {
     console.error('No matches found in template!')
@@ -67,16 +67,21 @@ function extractKeyValuePairs(contents: string) {
   for (const match of matches) {
     let strippedStr = match.replace('{{', '')
     strippedStr = strippedStr.replace('}}', '')
-    const [key, value, type] = strippedStr.split('::')
+    const [key, type, value] = strippedStr.split('::')
 
     const keyValuePair: KeyValuePair = {
       key,
-      value,
       type,
+      value,
     }
 
     keyValuePairs.push(keyValuePair)
   }
 
   return keyValuePairs
+}
+
+export function getKeyRegex(key: string) {
+  const regex = new RegExp(`{{2}${key}::.[a-z]+::.+}{2}`, 'gm')
+  return regex
 }
