@@ -3,16 +3,19 @@ import './App.css'
 import ApiService from './services/ApiService'
 import TemplateCard from './components/TemplateCard/TemplateCard'
 import {useNavigate} from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectTemplate } from './store/templateSlice'
 import Paths from './common/paths'
 import Header from './components/Header/Header'
+import { themeSelector } from './store'
+import { Theme } from './common'
 
 
 function App() {
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const theme = useSelector(themeSelector)
   
   const [templatesData, setTemplatesData] = useState<any[] | null>(null)
 
@@ -58,11 +61,13 @@ function App() {
   }
 
   return (
-    <div className="max-w-full">
-    
-      <Header />
+    <div className={theme === Theme.Light ? '' : 'dark'}>
+      <div className="w-full h-screen bg-white dark:bg-sky-950">
+      
+        <Header />
 
-      {getTemplatesView()}
+        {getTemplatesView()}
+      </div>
     </div>
   )
 }

@@ -17,5 +17,5 @@ app.use(cors())
 app.use('/api', apiRouter)
 
 app.listen(PORT, () => {
-  console.log(`PDF Generator Server is started on port: ${PORT}`)
+  console.log(`PDF Generator Server is running on port: ${PORT}`)
 })

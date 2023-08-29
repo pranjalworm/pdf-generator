@@ -7,19 +7,104 @@
       content="width=device-width, initial-scale=1.0"
     />
 
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      .something {
-        color: blue;
+      * {
+        padding: 0;
+        margin: 0;
+        color: #464a4e;
+      }
+
+      body {
+        max-width: 768px;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+      }
+
+      .root {
+        width: 100%;
+        margin: 0% auto;
+      }
+
+      header {
+        background: #f4f4f4;
+        font-family: 'Raleway', sans-serif;
+        font-weight: bold;
+        padding: 20px 40px;
+      }
+
+      header > .title {
+        font-size: 26px;
+      }
+
+      header > .sub-title {
+        font-size: 12px;
+      }
+
+      article {
+        padding: 20px 40px;
+      }
+
+      p {
+        margin: 16px 0;
       }
     </style>
   </head>
   <body>
-    <div class="something">
-      This is the company name {{companyName::COMPANY_NAME}}
-    </div>
+    <div class="root">
+      <header>
+        <div class="title">PRANJAL DUBEY</div>
 
-    <div class="something">
-      This is the person name {{personName::PERSON_NAME}} {{age::AGE}}
+        <div class="sub-title">SENIOR SOFTWARE ENGINEER</div>
+      </header>
+
+      <article>
+        <div>{{date::text::Date}}</div>
+        <br />
+        <br />
+
+        <div>{{addressee::text:Addressee}}</div>
+
+        <p>This is the company name {{companyName::text::Company Name}}</p>
+
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab voluptatem
+          facere pariatur, animi porro ex aut voluptatum dolorum, consectetur
+          accusantium eum deleniti molestiae, quis qui error minus eaque
+          doloribus quisquam!
+        </p>
+
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet nemo
+          harum veniam eaque amet voluptatem impedit doloribus eum, saepe
+          molestias voluptate repellendus, nisi sint ex quam, velit cumque
+          perspiciatis fugit.
+        </p>
+
+        <br />
+        Yours sincerely
+        <br />
+        <br />
+        {{addressor::text:Pranjal Dubey}}
+        <br />
+        {{addressorEmail::email::hi@pranjaldubey.com}}
+        <br />
+        {{addressorPhone::text::+91-9761375393}}
+      </article>
     </div>
   </body>
 </html>

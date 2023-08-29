@@ -11,9 +11,20 @@ export default class ApiService {
     }
   }
 
-  static async sendInputDetails(payload: any) {
+  static async getTemplateDetails(templateId: string) {
     try {
-      const response = await fetch(APIs.Details, {
+      const apiUrl = `${APIs.TemplateDetails}?templateId=${templateId}`
+      const response = await fetch(apiUrl)
+      const data = response.json()
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  static async sendTemplateDetails(payload: any) {
+    try {
+      const response = await fetch(APIs.TemplateDetails, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',

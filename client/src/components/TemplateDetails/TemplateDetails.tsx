@@ -1,63 +1,87 @@
 import { useSelector } from "react-redux"
 import { templateSelector } from "../../store/store"
-import { useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import ApiService from "../../services/ApiService"
 import { useNavigate } from "react-router-dom"
 import Paths from "../../common/paths"
+import TextInput from "../TextInput"
+import TextAreaInput from "../TextAreaInput"
+import NumberInput from "../NumberInput"
+import ImageInput from "../ImageInput"
 
 const TemplateDetails = () => {
 
   const navigate = useNavigate()
-
   const templateId = useSelector(templateSelector)
 
-  const [processing, setProcessing] = useState(false)
+  const inputDetails = useRef<{[key: string]: string | number}>({})
 
-  const [companyName, setCompanyName] = useState('')
+  const [templateDetails, setTemplateDetails] = useState<any[]>([])
 
-  const generatePdfClickHandler = async () => {
+  useEffect(() => {
+    const getTemplateDetails = async () => {
+      const templateDetails = await ApiService.getTemplateDetails(templateId)
+      console.log('template details', templateDetails)
+      setTemplateDetails(templateDetails)
 
-    const details = {
-      companyName,
-      templateId
+      for (const entry of templateDetails) {
+        const key = entry.key
+        inputDetails.current[key] = entry.value
+      }
     }
 
-    setProcessing(true)
+    getTemplateDetails()
+  }, [])
 
-    await ApiService.sendInputDetails(details)
+  const previewPdfHandler = async () => {
 
-    setProcessing(false)
+    const inputValues = inputDetails.current
+
+    const payload = {
+      templateId,
+      details: inputValues
+    }
+
+    await ApiService.sendTemplateDetails(payload)
 
     navigate(Paths.TemplateReview)
   }
 
-  const getGenerateButton = () => {
+  const onInputChangeHandler = (key: string, value: string | number) => {
+    
+    inputDetails.current[key] = value
+  }
 
-    const buttonText = processing ? 'Generating...' : 'Generate PDF'
+  const getInputField = (entry: {[key: string]: string}, i: number) => {
 
-    return (
-      <button className="border rounded px-4 py-2 bg-blue-900 text-white w-36"
-        onClick={generatePdfClickHandler}>
-          {buttonText}
-      </button>
-    )
+    const {key, type, value} = entry
+
+    switch(type) {
+      case 'text':
+        return <TextInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler}/>
+
+      case 'textarea':
+        return <TextAreaInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler} />
+
+      case 'number':
+        return <NumberInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler} />
+
+      case 'image':
+        return <ImageInput key={i} fieldKey={key} defaultValue={value} changeCallback={onInputChangeHandler}/>
+    }
   }
 
   return (
-    <div className="flex flex-col bg-slate-50 h-screen w-1/2 items-start p-8 m-8">
-      <input className="border rounded p-2 my-4 w-2/3"
-        name="company-name"
-        defaultValue={companyName}
-        placeholder="Company Name"
-        onChange={e => setCompanyName(e.target.value)} />
+    <div className="flex flex-col items-center bg-slate-50 h-screen w-1/2 p-8 m-8">
 
-      {/* <input className="border rounded p-2 my-4 w-2/3"
-        name="company-name"
-        defaultValue={companyName}
-        placeholder="Company Name"
-        onChange={e => setCompanyName(e.target.value)} /> */}
+      {
+        templateDetails.length && templateDetails.map((entry, i) => getInputField(entry, i))
+      }
 
-        {getGenerateButton()}
+      <button className="border rounded px-4 py-2 bg-blue-900 text-white w-36"
+        onClick={previewPdfHandler}>
+        Preview PDF
+      </button>
     </div>
   )
 }

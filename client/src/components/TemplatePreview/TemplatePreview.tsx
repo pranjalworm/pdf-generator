@@ -9,7 +9,7 @@ const TemplatePreview = (props: TemplatePreviewProps) => {
   const markup = {__html: template}
 
   return (
-    <div dangerouslySetInnerHTML={markup} />
+    <div className="bg-white" dangerouslySetInnerHTML={markup} />
   )
 }
 

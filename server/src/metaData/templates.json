@@ -1,10 +1,1 @@
-{
-  "template1.html": {
-    "companyName": "COMPANY_NAME",
-    "personName": "PERSON_NAME",
-    "age": "AGE"
-  },
-  "template2.html": {
-    "companyName": "COMPANY_NAME"
-  }
-}
+{"template1.html":[{"key":"logoImg","type":"image","value":"Image URL"},{"key":"companyName","type":"text","value":"Company Name"},{"key":"personName","type":"text","value":"Pranjal Dubey"},{"key":"age","type":"number","value":"29"},{"key":"description","type":"textarea","value":"Don't be serious"}],"template2.html":[{"key":"companyName","type":"text","value":"Apple Inc."}]}

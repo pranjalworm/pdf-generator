@@ -9,7 +9,12 @@ import {
 } from '../utils'
 import bodyParser from 'body-parser'
 import { APIs } from './routes'
-import { TemplatesPath, PreviewFilesPath, OutputFilesPath } from '../common'
+import {
+  TemplatesPath,
+  PreviewFilesPath,
+  OutputFilesPath,
+  TemplatesMetaDataPath,
+} from '../common'
 import { parseTemplate } from '../utils/templateParser'
 
 const router = express.Router()
@@ -45,19 +50,33 @@ router.get(APIs.Templates, async (req, res) => {
   res.send(templateData)
 })
 
+router.get(APIs.TemplateDetails, async (req, res) => {
+  const params = req.query
+
+  const { templateId } = params
+
+  if (!templateId) {
+    res.send({ success: false, error: 'Provide templateId' })
+    return
+  }
+
+  const data = (await readFromFile(TemplatesMetaDataPath)) as string
+  const templatesMetaData = JSON.parse(data)
+
+  const templateMetaData = templatesMetaData[templateId as string]
+
+  res.send(templateMetaData)
+})
+
 // API to fill template details
 router.post(APIs.TemplateDetails, jsonParser, async (req, res) => {
-  const { templateId, companyName } = req.body
-
-  const templateDetails = {
-    companyName,
-  }
+  const { templateId, details } = req.body
 
   const templatePath = `${TemplatesPath}/${templateId}`
 
   const contents = (await readFromFile(templatePath)) as string
 
-  const modifiedContents = fillTemplateDetails(contents, templateDetails)
+  const modifiedContents = fillTemplateDetails(contents, details)
 
   const filePath = `${PreviewFilesPath}/${templateId}`
 
@@ -99,9 +118,12 @@ router.get(APIs.GeneratePdf, async (req, res) => {
   }
 
   const filepath = `${PreviewFilesPath}/${templateId}`
-  const outputPath = `${OutputFilesPath}/${templateId}.pdf`
+  const templateName = (templateId as string).replace('.html', '')
+  const outputPath = `${OutputFilesPath}/${templateName}.pdf`
 
   generatePdf(filepath, outputPath)
+
+  res.send({ success: true })
 })
 
 // API to parse html template

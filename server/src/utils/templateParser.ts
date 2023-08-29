@@ -2,6 +2,12 @@ import path from 'path'
 import { readDir, readFromFile, writeToFile } from './fsUtils'
 import { TemplatesMetaDataPath, TemplatesPath } from '../common'
 
+interface KeyValuePair {
+  key: string
+  type: string
+  value: string
+}
+
 export async function parseAllTemplates() {
   const templatesPath = path.resolve(TemplatesPath)
 
@@ -47,23 +53,35 @@ export async function parseTemplate(templateId: string) {
 }
 
 function extractKeyValuePairs(contents: string) {
-  const regEx = /{{2}.[a-zA-Z]+::.[_A-Z]+}{2}/gm
+  const regex = /{{2}.[a-zA-Z]+::.[a-z]+::.+}{2}/gm
 
-  const matches = contents.match(regEx)
+  const matches = contents.match(regex)
 
   if (!matches) {
-    throw Error('No matches found in template!')
+    console.error('No matches found in template!')
+    return
   }
 
-  const keyValuePairs: { [key: string]: string } = {}
+  const keyValuePairs: KeyValuePair[] = []
 
   for (const match of matches) {
     let strippedStr = match.replace('{{', '')
     strippedStr = strippedStr.replace('}}', '')
-    const [key, value] = strippedStr.split('::')
+    const [key, type, value] = strippedStr.split('::')
 
-    keyValuePairs[key] = value
+    const keyValuePair: KeyValuePair = {
+      key,
+      type,
+      value,
+    }
+
+    keyValuePairs.push(keyValuePair)
   }
 
   return keyValuePairs
+}
+
+export function getKeyRegex(key: string) {
+  const regex = new RegExp(`{{2}${key}::.[a-z]+::.+}{2}`, 'gm')
+  return regex
 }
